@@ -1,0 +1,8 @@
+# Ignora archivos innecesarios para el build
+.git
+node_modules
+vendor
+*.md
+*.log
+*.test
+.env
