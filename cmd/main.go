@@ -5,20 +5,27 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirgloveface/go-iaapi/internal/config"
 	"github.com/sirgloveface/go-iaapi/internal/handler"
+	"github.com/sirgloveface/go-iaapi/internal/middleware"
 	"github.com/sirgloveface/go-iaapi/internal/repository"
 	"github.com/sirgloveface/go-iaapi/internal/service"
 )
 
 func main() {
 	r := gin.Default()
+	var repo repository.TaskRepository
+
+	// Middlewares
+	r.Use(middleware.CORSMiddleware())
+	r.Use(middleware.LoggerMiddleware())
+
+	// Public routes
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "OK"})
+		c.JSON(200, gin.H{"status": "ok"})
 	})
+
 	// PostgreSQL connection
 	// db := config.ConnectPostgres()
 	//repo := repository.NewInMemoryTaskRepository()
-
-	var repo repository.TaskRepository
 
 	// switch os.Getenv("DB")
 	switch "mongo" {
@@ -34,7 +41,16 @@ func main() {
 	svc := service.NewTaskService(repo)
 	h := handler.NewTaskHandler(svc)
 
-	h.RegisterRoutes(r)
+	//h.RegisterRoutes(r)
+
+	// Protected routes (requieren token)
+	protected := r.Group("/tasks")
+	protected.Use(middleware.AuthMiddleware())
+	{
+		protected.POST("", h.Create)
+		protected.GET("", h.GetAll)
+		protected.GET("/:id", h.GetByID)
+	}
 
 	r.Run() // :8080
 }
