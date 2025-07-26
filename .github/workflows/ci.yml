@@ -26,8 +26,7 @@ jobs:
         run: go test ./...
 
       - name: 🚀 Deploy to Render
-        uses: renderinc/render-deploy-action@v1
+        uses: JorgeLNJunior/render-deploy@v1.4.5
         with:
           service-id: ${{ secrets.RENDER_SERVICE_ID }}
           api-key: ${{ secrets.RENDER_API_KEY }}
-
