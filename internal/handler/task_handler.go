@@ -30,6 +30,16 @@ func (h *TaskHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, tasks)
 }
 
+// Create godoc
+// @Summary Crea una tarea
+// @Description Crea una nueva tarea en MongoDB
+// @Tags tasks
+// @Accept  json
+// @Produce  json
+// @Param task body model.Task true "Tarea a crear"
+// @Success 201
+// @Failure 500
+// @Router /tasks [post]
 func (h *TaskHandler) Create(c *gin.Context) {
 	var payload struct {
 		Title string `json:"title"`
