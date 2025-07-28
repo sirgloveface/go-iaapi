@@ -3,6 +3,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirgloveface/go-iaapi/internal/auth"
 	"github.com/sirgloveface/go-iaapi/internal/config"
 	"github.com/sirgloveface/go-iaapi/internal/handler"
 	"github.com/sirgloveface/go-iaapi/internal/middleware"
@@ -43,9 +44,11 @@ func main() {
 
 	//h.RegisterRoutes(r)
 
+	r.POST("/login", handler.LoginHandler)
 	// Protected routes (requieren token)
 	protected := r.Group("/tasks")
-	protected.Use(middleware.AuthMiddleware())
+	//protected.Use(middleware.AuthMiddleware())
+	protected.Use(auth.JWTAuthMiddleware())
 	{
 		protected.POST("", h.Create)
 		protected.GET("", h.GetAll)
